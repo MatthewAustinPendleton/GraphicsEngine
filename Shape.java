@@ -34,4 +34,47 @@ public class Shape {
             vertex.setZ(vertex.getZ() + tz);
         }
     }
+
+    public void rotateAlongX(float rotationAngleInDegrees) {
+        // Convert degrees to radians
+        float angleInRadians = (float) Math.toRadians(rotationAngleInDegrees);
+        float cosTheta = (float) Math.cos(angleInRadians);
+        float sinTheta = (float) Math.sin(angleInRadians);
+
+        for (Vector3 vertex : vertices) {
+            float y = vertex.getY();
+            float z = vertex.getZ();
+
+            // Apply the rotation about the x-axis
+            float newY = y * cosTheta - z * sinTheta;
+            float newZ = y * sinTheta + z * cosTheta;
+
+            vertex.setY(newY);
+            vertex.setZ(newZ);
+        }
+    }
+
+    public void rotateAlongY(float rotationAngleInDegrees) {
+        float angleInRadians = (float) Math.toRadians(rotationAngleInDegrees);
+        float cosTheta = (float) Math.cos(angleInRadians);
+        float sinTheta = (float) Math.sin(angleInRadians);
+
+        for (Vector3 vertex : vertices) {
+            float x = vertex.getX();
+            float z = vertex.getZ();
+
+            // Apply the rotation about the y-axis
+            float newX = x * cosTheta + z * sinTheta;
+            float newZ = -x * sinTheta + z * cosTheta;
+
+            vertex.setX(newX);
+            vertex.setZ(newZ);
+        }
+    }
+
+    public void printShape() {
+        for (Vector3 vertex : vertices) {
+            vertex.print();
+        }
+    }
 }

@@ -25,17 +25,23 @@ public class Runner {
         unitCube.addEdge(4, 5);
 
         System.out.println("Before translation: ");
-        for (Vector3 vertex : unitCube.getVertices()) {
-            vertex.print();
-        }
+        unitCube.printShape();
 
         // Translate the cube by (2, 3, 1)
         unitCube.translate(2, 3, 1);
 
         System.out.println("After translation: ");
-        for (Vector3 vertex : unitCube.getVertices()) {
-            vertex.print();
-        }
+        unitCube.printShape();
+
+        // Rotate the cube along the y-axis by 36 degrees
+        unitCube.rotateAlongY(36);
+        System.out.println("After rotating by 36 degrees: ");
+        unitCube.printShape();
+
+        // Rotate the cube along the x-axis by 90 degrees
+        unitCube.rotateAlongX(90);
+        System.out.println("After rotating about the x-axis by 90 degrees: ");
+        unitCube.printShape();
     }
     public static int getRandomNumber(int a, int b) {
         return (int)(Math.random() * (b - a + 1)) + a;
