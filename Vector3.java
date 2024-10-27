@@ -39,5 +39,4 @@ public class Vector3 {
     public void print() {
         System.out.println("(" + x + ", " + y + ", " + z + ")");
     }
-
 }

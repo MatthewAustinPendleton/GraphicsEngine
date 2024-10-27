@@ -35,8 +35,41 @@ public class Shape {
         }
     }
 
+    public void scale(float scalar) {
+        for (Vector3 vertex : vertices) {
+            vertex.setX(vertex.getX() * scalar);
+            vertex.setY(vertex.getY() * scalar);
+            vertex.setZ(vertex.getZ() * scalar);
+        }
+    }
+
+    public void scale(float scalarX, float scalarY, float scalarZ) {
+        for (Vector3 vertex : vertices) {
+            vertex.setX(vertex.getX() * scalarX);
+            vertex.setY(vertex.getY() * scalarY);
+            vertex.setZ(vertex.getZ() * scalarZ);
+        }
+    }
+
+    public void scaleX(float scalar) {
+        for (Vector3 vertex : vertices) {
+            vertex.setX(vertex.getX() * scalar);
+        }
+    }
+
+    public void scaleY(float scalar) {
+        for (Vector3 vertex : vertices) {
+            vertex.setY(vertex.getY() * scalar);
+        }
+    }
+
+    public void scaleZ(float scalar) {
+        for (Vector3 vertex : vertices) {
+            vertex.setZ(vertex.getZ() * scalar);
+        }
+    }
+
     public void rotateAlongX(float rotationAngleInDegrees) {
-        // Convert degrees to radians
         float angleInRadians = (float) Math.toRadians(rotationAngleInDegrees);
         float cosTheta = (float) Math.cos(angleInRadians);
         float sinTheta = (float) Math.sin(angleInRadians);
@@ -45,7 +78,7 @@ public class Shape {
             float y = vertex.getY();
             float z = vertex.getZ();
 
-            // Apply the rotation about the x-axis
+            // Apply the rotation matrix for the x-axis
             float newY = y * cosTheta - z * sinTheta;
             float newZ = y * sinTheta + z * cosTheta;
 
@@ -63,7 +96,7 @@ public class Shape {
             float x = vertex.getX();
             float z = vertex.getZ();
 
-            // Apply the rotation about the y-axis
+            // Apply the rotation matrix for the y-axis
             float newX = x * cosTheta + z * sinTheta;
             float newZ = -x * sinTheta + z * cosTheta;
 
@@ -72,9 +105,45 @@ public class Shape {
         }
     }
 
+    public void rotateAlongZ(float rotationAngleInDegrees) {
+        float angleInRadians = (float) Math.toRadians(rotationAngleInDegrees);
+        float cosTheta = (float) Math.cos(angleInRadians);
+        float sinTheta = (float) Math.sin(angleInRadians);
+
+        for (Vector3 vertex : vertices) {
+            float x = vertex.getX();
+            float y = vertex.getY();
+
+            // Apply the rotation matrix for the z-axis
+            float newX = x * cosTheta - y * sinTheta;
+            float newY = x * sinTheta + y * cosTheta;
+
+            vertex.setX(newX);
+            vertex.setY(newY);
+        }
+    }
+
     public void printShape() {
         for (Vector3 vertex : vertices) {
             vertex.print();
         }
+    }
+
+    public List<Vector3> perspectiveProject(float focalLength) {
+        // Initialize a list for projected vertices
+        List<Vector3> projectedVertices = new ArrayList<>();
+        for (Vector3 vertex : vertices) {
+
+            float x = vertex.getX();
+            float y = vertex.getY();
+            float z = vertex.getZ();
+
+            // Perspective projection
+            float xPrime = (focalLength * x) / (z + focalLength);
+            float yPrime = (focalLength * y) / (z + focalLength);
+
+            projectedVertices.add(new Vector3(xPrime, yPrime, 0));
+        }
+        return projectedVertices;
     }
 }

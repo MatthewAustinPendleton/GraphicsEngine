@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class Runner {
     public static void main(String[] args) {
         Shape unitCube = new Shape();
@@ -35,13 +37,32 @@ public class Runner {
 
         // Rotate the cube along the y-axis by 36 degrees
         unitCube.rotateAlongY(36);
-        System.out.println("After rotating by 36 degrees: ");
+        System.out.println("After rotating about the y-axis by 36 degrees: ");
         unitCube.printShape();
 
         // Rotate the cube along the x-axis by 90 degrees
         unitCube.rotateAlongX(90);
         System.out.println("After rotating about the x-axis by 90 degrees: ");
         unitCube.printShape();
+
+        // Rotate the cube along the z-axis by 35 degrees
+        unitCube.rotateAlongZ(35);
+        System.out.println("After rotating about the z-axis by 35 degrees: ");
+        unitCube.printShape();
+
+        // Scale the entire cube by 4.5
+        unitCube.scale((float) 4.5);
+        System.out.println("After scaling by 4.5...");
+        unitCube.printShape();
+
+        // Project the 3D shape, the unitCube, to a 2D shape, the unitSquare, with a focal
+        // length of 5.
+        List<Vector3> projectedVertices = unitCube.perspectiveProject(5);
+
+        System.out.println("Projected 2D coordinates of the highly transformed ");
+        for (Vector3 vertex : projectedVertices) {
+            vertex.print();
+        }
     }
     public static int getRandomNumber(int a, int b) {
         return (int)(Math.random() * (b - a + 1)) + a;
