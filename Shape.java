@@ -146,4 +146,36 @@ public class Shape {
         }
         return projectedVertices;
     }
+
+    public void createCube(float size) {
+        // Clear existing vertices/edges
+        vertices.clear();
+        edges.clear();
+
+        // Centering cube at origin
+        float halfSize = size / 2;
+
+        addVertex(new Vector3(halfSize, halfSize, halfSize)); // Vertex 0 (A)
+        addVertex(new Vector3(-halfSize, halfSize, halfSize)); // Vertex 1 (B)
+        addVertex(new Vector3(-halfSize, -halfSize, halfSize)); // Vertex 2 (C)
+        addVertex(new Vector3(halfSize, -halfSize, halfSize)); // Vertex 3 (D)
+        addVertex(new Vector3(halfSize, halfSize, -halfSize)); // Vertex 4 (E)
+        addVertex(new Vector3(-halfSize, halfSize, -halfSize)); // Vertex 5 (F)
+        addVertex(new Vector3(-halfSize, -halfSize, -halfSize)); // Vertex 6 (G)
+        addVertex(new Vector3(halfSize, -halfSize, -halfSize)); // Vertex 7 (H)
+
+        // 12 edges of cube
+        addEdge(0, 1); // AB
+        addEdge(1, 2); // BC
+        addEdge(2, 3); // CD
+        addEdge(3, 0); // DA
+        addEdge(4, 5); // EF
+        addEdge(5, 6); // FG
+        addEdge(6, 7); // GH
+        addEdge(7, 4); // HE
+        addEdge(0, 4); // AE
+        addEdge(1, 5); // BF
+        addEdge(2, 6); // CG
+        addEdge(3, 7); // DH
+    }
 }
