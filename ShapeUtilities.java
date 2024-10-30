@@ -2,13 +2,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShapeUtilities {
-    public static void combineShapes(List<Vector3> allVertices, List<int[]> allEdges,
-                                     List<Vector3> projectedVertices, List<int[]> edges,
-                                     int offset) {
-        allVertices.addAll(projectedVertices);
+    public static List<Vector3> perspectiveProject(List<Vector3> vertices, float focalLength) {
+        List<Vector3> projectedVertices = new ArrayList<>();
+        for (Vector3 vertex : vertices) {
+            float x = vertex.getX();
+            float y = vertex.getY();
+            float z = vertex.getZ();
 
-        for (int[] edge : edges) {
-            allEdges.add(new int[]{edge[0] + offset, edge[1] + offset});
+            // Apply perspective projection
+            float xPrime = (focalLength * x) / (z + focalLength);
+            float yPrime = (focalLength * y) / (z + focalLength);
+
+            projectedVertices.add(new Vector3(xPrime, yPrime, 0));
         }
+        return projectedVertices;
     }
 }

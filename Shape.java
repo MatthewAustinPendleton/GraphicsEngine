@@ -11,6 +11,35 @@ public class Shape {
         edges = new ArrayList<>();
     }
 
+    public List<Vector3> getTransformedVertices(Camera camera) {
+        List<Vector3> transformedVertices = new ArrayList<>();
+        Vector3 cameraPos = camera.getPosition();
+
+        // Adjust the vertices based on the camera's position
+        for (Vector3 vertex : vertices) {
+            float x = vertex.getX() - cameraPos.getX();
+            float y = vertex.getY() - cameraPos.getY();
+            float z = vertex.getZ() - cameraPos.getZ();
+
+            // Apply rotation around the Y-axis (the yaw, ya'll)
+            float cosYaw = (float) Math.cos(Math.toRadians(camera.getYaw()));
+            float sinYaw = (float) Math.sin(Math.toRadians(camera.getYaw()));
+
+            float xRot = x * cosYaw - z * sinYaw;
+            float zRot = x * sinYaw + z * cosYaw;
+
+            // Apply rotation around the X-axis (pitch!)
+            float cosPitch = (float) Math.cos(Math.toRadians(camera.getPitch()));
+            float sinPitch = (float) Math.sin(Math.toRadians(camera.getPitch()));
+
+            float yRot = y * cosPitch - zRot * sinPitch;
+            zRot = y * sinPitch + zRot * cosPitch;
+
+            transformedVertices.add(new Vector3(xRot, yRot, zRot));
+        }
+        return transformedVertices;
+    }
+
     public void rotate(float rotationX, float rotationY, float rotationZ) {
         rotateAlongX(rotationX);
         rotateAlongY(rotationY);
