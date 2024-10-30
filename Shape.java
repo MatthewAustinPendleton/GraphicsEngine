@@ -3,12 +3,18 @@ import java.util.List;
 
 public class Shape {
 
-    private List<Vector3> vertices; // List storing 3D points
-    private List<int[]> edges;      // List to store edges as pairs of vertices
+    public List<Vector3> vertices; // List storing 3D points
+    public List<int[]> edges;      // List to store edges as pairs of vertices
 
     public Shape() {
         vertices = new ArrayList<>();
         edges = new ArrayList<>();
+    }
+
+    public void rotate(float rotationX, float rotationY, float rotationZ) {
+        rotateAlongX(rotationX);
+        rotateAlongY(rotationY);
+        rotateAlongZ(rotationZ);
     }
 
     public void addVertex(Vector3 vertex) {
@@ -177,5 +183,95 @@ public class Shape {
         addEdge(1, 5); // BF
         addEdge(2, 6); // CG
         addEdge(3, 7); // DH
+    }
+
+    public void createPyramid(float baseSize, float height) {
+        // Clear existing vertices/edges in shape
+        vertices.clear();
+        edges.clear();
+
+        // Half the base size to center at the origin
+        float halfBase = baseSize / 2;
+
+        // Define the 5 vertices of the pyramid
+        addVertex(new Vector3(halfBase, 0, halfBase)); // Vertex 0 (A)
+        addVertex(new Vector3(-halfBase, 0, halfBase)); // Vertex 1 (B)
+        addVertex(new Vector3(-halfBase, 0, -halfBase)); // Vertex 2 (C)
+        addVertex(new Vector3(halfBase, 0, -halfBase)); // Vertex 3 (D)
+        addVertex(new Vector3(0, height, 0)); // Vertex 4 (apex)
+
+        // Define the 8 edges of the pyramid
+        addEdge(0, 1); // AB
+        addEdge(1, 2); // BC
+        addEdge(2, 3); // CD
+        addEdge(3, 0); // DA
+        addEdge(0, 4); // AE
+        addEdge(1, 4); // BE
+        addEdge(2, 4); // CE
+        addEdge(3, 4); // DE
+    }
+
+    public void createCylinder(float radius, float height, int segments) {
+        // Clear existing vertices/edges
+        vertices.clear();
+        edges.clear();
+
+        // Create vertices for the top and bottom circles
+        for (int i = 0; i < segments; i++) {
+            double angle = 2 * Math.PI * i / segments;
+            float x = radius * (float) Math.cos(angle);
+            float z = radius * (float) Math.sin(angle);
+
+            // Add top and bottom vertices
+            addVertex(new Vector3(x, height / 2, z)); // Top vertex
+            addVertex(new Vector3(x, -height / 2, z)); // Bottom vertex
+        }
+
+        // Create edges for the top and bottom circles
+        for (int i = 0; i < segments; i++) {
+            int next = (i + 1) % segments; // Wrap around to connect the last to the first
+
+            // Top circle edges
+            addEdge(i * 2, next * 2);
+
+            // Bottom circle edges
+            addEdge(i * 2 + 1, next * 2 + 1);
+
+            // Side edges between top and bottom
+            addEdge(i * 2, i * 2 + 1);
+        }
+    }
+
+    public void createSphere(float radius, int latitudeSegments, int longitudeSegments) {
+        // Clear
+        vertices.clear();
+        edges.clear();
+
+        // Generate vertices
+        for (int i = 0; i <= latitudeSegments; i++) {
+            double theta = Math.PI * i / latitudeSegments; // polar angle
+            float y = radius * (float) Math.cos(theta); // height
+
+            for (int j = 0; j < longitudeSegments; j++) {
+                double phi = 2 * Math.PI * j / longitudeSegments; // azimuthal angle
+                float x = radius * (float) (Math.sin(theta) * Math.cos(phi));
+                float z = radius * (float) (Math.sin(theta) * Math.sin(phi));
+
+                addVertex(new Vector3(x, y, z));
+            }
+        }
+
+        // Generate edges
+        for (int i = 0; i < latitudeSegments; i++) {
+            for (int j = 0; j < longitudeSegments; j++) {
+                int current = i * longitudeSegments + j;
+                int next = (j + 1) % longitudeSegments + i * longitudeSegments;
+                int upper = (i + 1) * longitudeSegments + j;
+                addEdge(current, next);
+                if (i < latitudeSegments - 1) {
+                    addEdge(current, upper);
+                }
+            }
+        }
     }
 }

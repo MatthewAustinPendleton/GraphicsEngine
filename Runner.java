@@ -1,43 +1,81 @@
-import java.util.ArrayList;
+import java.awt.*;
 import java.util.List;
+import javax.swing.*;
 
 public class Runner {
-    public static void main(String[] args) {
-        Shape unitCube = new Shape();
-        Shape unitCube2 = new Shape();
-        Shape unitCube3 = new Shape();
-
-        unitCube.createCube(2.0f);
-        unitCube2.createCube(3.0f);
-        unitCube3.createCube(1.0f);
-
-        unitCube.translate(0, 0, -5);
-        unitCube2.translate(0, 0, -4);
-        unitCube3.translate(0, 1, -3);
-        unitCube.rotateAlongX(30);
-        unitCube.rotateAlongY(45);
-        unitCube2.rotateAlongX(25);
-        unitCube2.rotateAlongZ(10);
-        unitCube3.rotateAlongX(45);
-
-        // Project cube to 2D screen
-        List<Vector3> projectedVertices = unitCube.perspectiveProject(10);
-        List<Vector3> projectedVertices2 = unitCube2.perspectiveProject(10);
-        List<Vector3> projectedVertices3 = unitCube3.perspectiveProject(10);
-
-        // Combine projected vertices and edges of all cubes
-        List<Vector3> allVertices = new ArrayList<>();
-        List<int[]> allEdges = new ArrayList<>();
-
-        // Combine shapes
-        ShapeUtilities.combineShapes(allVertices, allEdges, projectedVertices, unitCube.getEdges(), 0);
-        ShapeUtilities.combineShapes(allVertices, allEdges, projectedVertices2, unitCube2.getEdges(), projectedVertices.size());
-        ShapeUtilities.combineShapes(allVertices, allEdges, projectedVertices3, unitCube3.getEdges(), projectedVertices2.size());
-
-        // Display wireframe
-        WireframeViewer.display(allVertices, allEdges);
-    }
     public static int getRandomNumber(int a, int b) {
         return (int)(Math.random() * (b - a + 1)) + a;
     }
+
+    public static void main(String[] args) {
+        // Create a scene
+        Scene scene = new Scene();
+
+        // Create coordinate system
+        CoordinateSystem coordinateSystem = new CoordinateSystem(10.0f);
+        scene.addShape(coordinateSystem);
+
+        // Crate the shapes to display
+        Shape cube = new Shape();
+        cube.createCube(2.0f);
+        cube.translate(-4, 0, 0);
+
+        Shape pyramid = new Shape();
+        pyramid.createPyramid(2.0f, 4.0f);
+        pyramid.translate(4, 0, 0);
+
+        Shape cylinder = new Shape();
+        cylinder.createCylinder(1.5f, 3.0f, 25);
+        cylinder.translate(0, -3.5f, 0);
+
+        Shape sphere = new Shape();
+        sphere.createSphere(2.5f, 25, 25);
+        sphere.translate(0, 2, 0);
+
+        // Add the shapes to the scene
+        scene.addShape(cube);
+        scene.addShape(pyramid);
+        scene.addShape(cylinder);
+        scene.addShape(sphere);
+
+        // Get initial projected vertices/edges
+        List<Vector3> allProjectedVertices = scene.getAllProjectedVertices(10);
+        List<int[]> allEdges = scene.getAllEdges();
+        List<Color> axisColors = coordinateSystem.getAxisColors();
+
+        // Create the wireframe viewer
+        WireframeViewer viewer = new WireframeViewer(allProjectedVertices, allEdges, axisColors);
+        JFrame frame = new JFrame("3D Wireframe Viewer");
+        frame.add(viewer);
+        frame.setSize(600, 600);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
+        startRotation(sphere, 0.0f, 0.0f, 1.0f, 4, scene, viewer);
+        startRotation(cube, 1.0f, 0.0f, 0.0f, 6, scene, viewer);
+        startRotation(cylinder, 0.0f, 1.0f, 0.0f, 10, scene, viewer);
+        startRotation(pyramid, 0.0f, 1.0f, 0.0f, 20, scene, viewer);
+
+    }
+
+    public static void startRotation(Shape shape, float rotationX, float rotationY, float rotationZ, int delay, Scene scene,
+                                     WireframeViewer viewer) {
+        // Create a Timer to update rotation continuously
+        Timer timer = new Timer(delay, e -> {
+            // Rotate the cube continuously
+            shape.rotate(rotationX, rotationY, rotationZ);
+
+            // Get all the projected vertices and edges
+            List<Vector3> updatedProjectedVertices = scene.getAllProjectedVertices(10);
+            List<int[]> updatedEdges = scene.getAllEdges();
+
+            // Update the viewer
+            viewer.updateWireframe(updatedProjectedVertices, updatedEdges);
+            viewer.repaint();
+        });
+
+        // Start the timer
+        timer.start();
+    }
+
 }
